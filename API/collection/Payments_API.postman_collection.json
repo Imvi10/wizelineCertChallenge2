@@ -1,0 +1,1046 @@
+{
+	"info": {
+		"_postman_id": "3c525aa0-6e8d-4cc7-86da-ff55daeeb675",
+		"name": "Payments API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create",
+					"item": [
+						{
+							"name": "Create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"pm.collectionVariables.set(\"paymentId\",responseJSON.payment.id);",
+											"pm.collectionVariables.set(\"locationId\", responseJSON.payment.location_id);",
+											"",
+											"//Arrange",
+											"var currency = pm.variables.get(\"currency\");",
+											"var amount = parseFloat(pm.variables.get(\"amount\"));",
+											"//Assert",
+											"pm.test(\"Assert sent Amount and Currency\", function(){",
+											"    pm.expect(responseJSON.payment.amount_money.currency).to.eql(currency);",
+											"    pm.expect(responseJSON.payment.amount_money.amount).to.eql(amount); ",
+											"});",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Square-Version",
+										"value": "{{apiVersion}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idempotency_key\": \"{{$randomUUID}}\",\n     \"amount_money\": {\n      \"amount\": {{amount}},\n      \"currency\": \"{{currency}}\"\n    },\n    \"source_id\": \"cnon:card-nonce-ok\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create autocomplete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"pm.collectionVariables.set(\"paymentIdAutoCompleteFalse\",responseJSON.payment.id);",
+											"pm.collectionVariables.set(\"locationId\", responseJSON.payment.location_id);",
+											"",
+											"//Arrange",
+											"var currency = pm.variables.get(\"currency\");",
+											"var amount = parseFloat(pm.variables.get(\"amount\"));",
+											"//Assert",
+											"pm.test(\"Assert sent Amount and Currency\", function(){",
+											"    pm.expect(responseJSON.payment.amount_money.currency).to.eql(currency);",
+											"    pm.expect(responseJSON.payment.amount_money.amount).to.eql(amount); ",
+											"});",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Square-Version",
+										"value": "{{apiVersion}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idempotency_key\": \"{{$randomUUID}}\",\n     \"amount_money\": {\n      \"amount\": {{amount}},\n      \"currency\": \"{{currency}}\"\n    },\n    \"source_id\": \"cnon:card-nonce-ok\",\n    \"autocomplete\":false\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create sourceId Cash message",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"//Arrange",
+											"// Having ERROR_PartialAuthNotValid Like this we have the message in only 1 place and maintenance will be easier",
+											"var errorsDetail =responseJSON.errors[0].detail;",
+											"//Assert",
+											"pm.test(\"Assert message 'Accept partial authorization not valid for autocomplete payments.'\", function(){",
+											"    pm.expect(pm.variables.get(\"ERROR_PartialAuthNotValid\")).to.eql(errorsDetail);",
+											"});",
+											"",
+											"//Code validation ",
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"errors\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 200\", function () {",
+											"    pm.response.to.not.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Square-Version",
+										"value": "{{apiVersion}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idempotency_key\": \"{{$randomUUID}}\",\n     \"amount_money\": {\n      \"amount\": {{amount}},\n      \"currency\": \"{{currency}}\"\n    },\n    \"source_id\": \"CASH\",\n    \"accept_partial_authorization\":true,\n    \"cash_details\":{\n        \"buyer_supplied_money\":{\n        \"amount\": {{amount}},\n        \"currency\": \"{{currency}}\"\n        }\n    }\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Read",
+					"item": [
+						{
+							"name": "Get",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"",
+											"var paymentURLId = pm.variables.get(\"paymentId\");",
+											"var paymentResponseId = responseJSON.payment.id;",
+											"",
+											"pm.test(\"Validate paymentId from URL matches response paymentId\", function(){",
+											"    pm.expect(paymentResponseId).to.eql(paymentResponseId);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/{{paymentId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										"{{paymentId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											"",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Update",
+					"item": [
+						{
+							"name": "Update",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idempotency_key\": \"{{$randomUUID}}\",\n    \"payment\": {\n        \"amount_money\": {\n            \"amount\": {{amount}},\n            \"currency\": \"{{currency}}\"\n        }\n    }\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/{{paymentIdAutoCompleteFalse}}?idempotency_key={{$randomUUID}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										"{{paymentIdAutoCompleteFalse}}"
+									],
+									"query": [
+										{
+											"key": "idempotency_key",
+											"value": "{{$randomUUID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Adding tip",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"",
+											"var expectedTotalValue = parseFloat(pm.variables.get(\"tipAmount\")) + parseFloat(pm.variables.get(\"amount\"));",
+											"var responseTotal =  responseJSON.payment.total_money.amount;",
+											"",
+											"",
+											"pm.test(\"Validate Updated tip total adding tip\",function(){",
+											"    pm.expect(expectedTotalValue).to.eql(responseTotal);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idempotency_key\": \"{{$randomUUID}}\",\n    \"payment\": {\n        \"amount_money\": {\n            \"amount\": {{amount}},\n            \"currency\": \"{{currency}}\"\n        },\n    \"tip_money\": {\n        \"amount\": {{tipAmount}},\n        \"currency\": \"{{currency}}\"\n      }\n    }\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/{{paymentIdAutoCompleteFalse}}?idempotency_key={{$randomUUID}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										"{{paymentIdAutoCompleteFalse}}"
+									],
+									"query": [
+										{
+											"key": "idempotency_key",
+											"value": "{{$randomUUID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Complete",
+					"item": [
+						{
+							"name": "Complete",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"pm.collectionVariables.set(\"paymentId\",responseJSON.payment.id);",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Square-Version",
+										"value": "{{apiVersion}}",
+										"type": "text"
+									},
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"payment_id\": \"{{paymentId}}\"  \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/{{paymentId}}/{{COMPLETE_ENDPOINT}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										"{{paymentId}}",
+										"{{COMPLETE_ENDPOINT}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cancel",
+					"item": [
+						{
+							"name": "Cancel",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//schema validation ",
+											"const schema = {",
+											"    \"payment\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/{{paymentIdAutoCompleteFalse}}/{{CANCEL_ENDPOINT}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										"{{paymentIdAutoCompleteFalse}}",
+										"{{CANCEL_ENDPOINT}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cancel non existing payment",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var errorMsg = pm.variables.get(\"ERROR_CouldNotFindPayment\") + pm.variables.get(\"fakePaymentID\");",
+											"var responseJSON = pm.response.json(); ",
+											"",
+											"//Arrange",
+											"// Having ERROR_CouldNotFindPayment Like this we have the message in only 1 place and maintenance will be easier",
+											"var errorsDetail =responseJSON.errors[0].detail;",
+											"//Assert",
+											"pm.test(\"Assert message 'Could not find payment with id:'\", function(){",
+											"    pm.expect(errorMsg).to.eql(errorsDetail);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"errors\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 404\", function () {",
+											"    pm.response.to.have.status(404);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{paymentsSubURL}}/{{fakePaymentID}}/{{CANCEL_ENDPOINT}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{paymentsSubURL}}",
+										"{{fakePaymentID}}",
+										"{{CANCEL_ENDPOINT}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Refunds",
+			"item": [
+				{
+					"name": "Create",
+					"item": [
+						{
+							"name": "Create",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var moment = require('moment')",
+											"var responseJSON = pm.response.json(); ",
+											"let today   = moment().format(\"YYYY-MM-DD\");",
+											"let createdAtResponse =moment(responseJSON.created_at).format(\"YYYY-MM-DD\");",
+											"",
+											"",
+											"pm.collectionVariables.set(\"refundId\",responseJSON.refund.id);",
+											"",
+											"pm.test(\"Validate created_at matches with date that refund was created\", function(){",
+											"    pm.expect(today,createdAtResponse,today + \" is not equal to \" + createdAtResponse);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"refund\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"payment_id\": \"{{paymentId}}\",\n    \"idempotency_key\": \"{{$randomUUID}}\",\n    \"amount_money\": {\n        \"amount\": {{amount}},\n        \"currency\": \"{{currency}}\"\n    },\n    \"reason\": \"{{REFUNDS_TEST_REASON}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{refundsSubURL}}/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{refundsSubURL}}",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create AMOUNT_TOO_HIGH",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var responseJSON = pm.response.json(); ",
+											"//Arrange",
+											"// Having ERROR_PartialAuthNotValid Like this we have the message in only 1 place and maintenance will be easier",
+											"var errorsCode =responseJSON.errors[0].code;",
+											"var msg = pm.variables.get(\"ERROR_AmountTooHigh\");",
+											"//Assert",
+											"pm.test(\"Assert message 'AMOUNT_TOO_HIGH'\", function(){",
+											"    pm.expect(msg).to.eql(errorsCode);",
+											"});",
+											"",
+											"//Code Validation",
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"errors\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 200\", function () {",
+											"    pm.response.to.not.have.status(200);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"payment_id\": \"{{paymentId}}\",\n    \"idempotency_key\": \"{{$randomUUID}}\",\n    \"amount_money\": {\n        \"amount\": {{amountTooHigh}},\n        \"currency\": \"{{currency}}\"\n    },\n    \"reason\": \"{{REFUNDS_TEST_REASON}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseURL}}/{{refundsSubURL}}/",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{refundsSubURL}}",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Read",
+					"item": [
+						{
+							"name": "Get All",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"refund\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/{{refundsSubURL}}/{{refundId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{refundsSubURL}}",
+										"{{refundId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"//Code Validation",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"//schema validation ",
+											"const schema = {",
+											"    \"refund\": \"object\"",
+											"};",
+											"pm.test(\"Validate schema\", () => {",
+											"    pm.response.to.have.jsonSchema(schema);",
+											"});",
+											"",
+											"//negative test - Not having enough time to figure because received the excerciso after weekend ",
+											"pm.test(\"Status code is not 400\", function () {",
+											"    pm.response.to.not.have.status(400);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/{{refundsSubURL}}/{{refundId}}",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"{{refundsSubURL}}",
+										"{{refundId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"",
+					"pm.test(\"Response time is less than 100000ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(100000);",
+					"});",
+					"",
+					"",
+					"//content validation ",
+					"pm.test(\"Validate content\", () => {",
+					"    pm.response.to.have.jsonBody();",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "paymentId",
+			"value": "7Zc7szTANkxLiMnfS5gFdAaw0LDZY"
+		},
+		{
+			"key": "locationId",
+			"value": "LS9SHPHG2G8XY"
+		},
+		{
+			"key": "refundId",
+			"value": "BGjuDik73RxQ6QredNwegquHedWZY_Pe3eMJeHEGndrU2ib0LidIcRgn9cdGOMfJIDAKgYyHR"
+		},
+		{
+			"key": "paymentIdAutoCompleteFalse",
+			"value": "7Zc7szTANkxLiMnfS5gFdAaw0LDZY"
+		}
+	]
+}
